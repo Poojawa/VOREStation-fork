@@ -140,11 +140,11 @@
 /obj/structure/bed/chair/comfy/lime/Initialize(var/ml,var/newmaterial)
 	. = ..(ml, MAT_STEEL, "lime")
 
-/obj/structure/bed/chair/comfy/red/New(var/newloc,var/newmaterial)
-	..(newloc,"steel","carpet")
+/obj/structure/bed/chair/comfy/yellow/Initialize(var/ml,var/newmaterial)
+	. = ..(ml, MAT_STEEL, "yellow")
 
-/obj/structure/bed/chair/comfy/teal/New(var/newloc,var/newmaterial)
-	..(newloc,"steel","teal")
+/obj/structure/bed/chair/comfy/orange/Initialize(var/ml,var/newmaterial)
+	. = ..(ml, MAT_STEEL, "orange")
 
 /obj/structure/bed/chair/comfy/rounded
 	name = "rounded chair"
