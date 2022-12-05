@@ -139,12 +139,12 @@
 //I mean, *technically* this goes here.
 /datum/supply_pack/vending_refills/synthesizer
 	contains = list(/obj/item/weapon/reagent_containers/synth_disp_cartridge)
-	name = "Food Synthesizer Replacement Cartridge (Standard)"
+	name = "Food Synthesizer Cartridge (Standard)"
 	cost = 20 //pricy so chef value is ever better.
 	containername = "food synthesizer cartridge crate"
 
 /datum/supply_pack/vending_refills/synthesizer/smol
-	contains = list(/obj/item/weapon/reagent_containers/synth_disp_cartridge/small = 2)
-	name = "Portable Food Synthesizer Replacement Cartridges (2)"
-	cost = 20
+	contains = list(/obj/item/weapon/reagent_containers/synth_disp_cartridge/small)
+	name = "Food Synthesizer Cartridge (Portable)"
+	cost = 10
 	containername = "portable food synthesizer cartridge crate"

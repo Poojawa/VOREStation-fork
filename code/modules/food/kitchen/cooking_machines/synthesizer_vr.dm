@@ -55,6 +55,7 @@
 
 	//all of our food
 	var/static/datum/category_collection/synthesizer_recipes/synthesizer_recipes
+	var/static/list/recipe_list
 	var/food_mimic_storage
 
 	//Voice activation stuff
@@ -70,6 +71,14 @@
 	cart = new /obj/item/weapon/reagent_containers/synth_disp_cartridge(src)
 	if(!synthesizer_recipes)
 		synthesizer_recipes = new()
+	if(!recipe_list)
+		for(var/typepath in subtypesof(/datum/category_item/synthesizer))
+			var/datum/category_item/synthesizer/R = new typepath()
+			if(R.name)
+				recipe_list[R.name] = R
+			else
+				qdel(R)
+
 	wires = new(src)
 
 	our_db = SStranscore.db_by_key(db_key)
@@ -88,6 +97,14 @@
 	cart = new /obj/item/weapon/reagent_containers/synth_disp_cartridge/small(src)
 	if(!synthesizer_recipes)
 		synthesizer_recipes = new()
+	if(!recipe_list)
+		for(var/typepath in subtypesof(/datum/category_item/synthesizer))
+			var/datum/category_item/synthesizer/R = new typepath()
+			if(R.name)
+				recipe_list[R.name] = R
+			else
+				qdel(R)
+
 	wires = new(src)
 
 	our_db = SStranscore.db_by_key(db_key)
@@ -124,9 +141,15 @@
 	)
 
 /obj/machinery/synthesizer/tgui_interact(mob/user, datum/tgui/ui)
+	if(!is_operational)
+		return
+
+	if(shocked && !(machine_stat & NOPOWER))
+		shock(user, 50)
+
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "Synthesizer", name)
+		ui = new(user, src, "Synthesizer")
 		ui.open()
 
 /obj/machinery/synthesizer/tgui_status(mob/user)
@@ -136,23 +159,8 @@
 
 /obj/machinery/synthesizer/tgui_static_data(mob/user)
 	var/list/data = ..()
-	var/list/categories = list()
 	var/list/recipes = list()
-	for(var/datum/category_group/synthesizer/menulist in synthesizer_recipes.categories)
-		categories += menulist.name
-		for(var/datum/category_item/synthesizer/food in menulist.items)
-			if(food.hidden && !hacked)
-				continue
-				recipes.Add(list(list(
-					"category" = menulist.name,
-					"id" = menulist.id,
-					"name" = food.name,
-					"ref" = REF(food),
-					"voice_order" = food.voice_order,
-					"voice_temp" = food.voice_temp,
-					"hidden" = food.hidden,
-					)))
-	data["recipes"] = recipes
+	data["recipes"] = handle_food()
 	data["categories"] = categories
 	return data
 
@@ -198,7 +206,42 @@
 		bodyrecords_list_ui[++bodyrecords_list_ui.len] = list("name" = N, "recref" = "\ref[BR]")
 	data["bodyrecords"] = bodyrecords_list_ui
 
+	data["modal"] = tgui_modal_data(src)
 	return data
+
+/obj/machinery/synthesizer/proc/handle_food
+	var/list/output = list()
+
+	var/datum/asset/spritesheet/research_designs/spritesheet = get_asset_datum(/datum/asset/spritesheet/synthesizer)
+	var/size32x32 = "[spritesheet.name]32x32"
+
+	for(var/datum/category_group/synthesizer/menulist in synthesizer_recipes.categories)
+		var/datum/category_item/synthesizer/food = menulist[])
+			var/icon_size = spritesheet.icon_size_id(food.id)
+
+		var/list/design_data = list(
+			"name" = design.name,
+			"desc" = food.desc,
+			"id" = design.id,
+			"categories" = design.category,
+			"icon" = "[icon_size == size32x32 ? "" : "[icon_size] "][design.id]",
+
+
+			if(food.hidden && !hacked)
+				continue
+				recipes.Add(list(list(
+					"category" = menulist.name,
+					"id" = menulist.id,
+					"name" = food.name,
+					"ref" = REF(food),
+					"voice_order" = food.voice_order,
+					"voice_temp" = food.voice_temp,
+					"hidden" = food.hidden,
+					)))
+
+		output += list(design_data)
+
+	return output
 
 /obj/machinery/synthesizer/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
 	if(..())

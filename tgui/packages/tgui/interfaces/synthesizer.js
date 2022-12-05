@@ -33,7 +33,6 @@ export const Synthesizer = (props, context) => {
 
   let body;
   if (screen === 1) {
-    // Menu time!
     body = <AppetizerMenu />;
   } else if (screen === 2) {
     body = <BreakfastMenu />;
