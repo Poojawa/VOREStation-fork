@@ -1,0 +1,45 @@
+Jumpsuit	-> Department stripe, bottoms
+Uniform		-> Department overlay, bottoms
+Vest		-> Department overlay, bottoms
+Business	-> tie color, bottoms
+Bodysuit	-> Department overlay,
+overalls	-> Department overlay, overall color, bottoms
+Cheongsam	-> Lighting pattern, Ribbon, Floral
+wifebeater	-> bottoms
+button down	-> department overlays, bottoms
+
+Bottoms:
+Shorts, Cargo Shorts, Pants, Cargo/tac pants, Skirt, Long Skirt, yogapants, workpants
+Digitigrade versions
+
+
+Suits:
+
+Torso armor	-> badge, logo
+Jacket		-> full, open, sleeveless, half
+flannel		-> colors, jacket options
+Dep jacket	-> colorable open/close
+snowsuit	-> department overlay, open/close
+labcoat		-> colors, department overlay, open/close
+service jacket -> department overlay, rank, trim, open/close
+Neo Jacket	-> color, open/closed, department, trim
+cloaks		-> Colors, lining
+suit jacket	-> colors, department overlay, rank
+varsity		-> colors, open/closed
+Kimono		-> colors, accent
+Hoodie		-> colors, trim
+track jacket-> colors, trim
+
+
+Skrell_suit	-> underlay, overlay
+ERT			-> Department overlay
+PMC Rig		-> rank, department
+Vintage		-> department overlay
+HEV			-> Colorable plates
+
+Colormate functionality in clothing vendor. Select relevant changes before dispensing. 
+
+Cost factor??
+Limits per ID card?? - Refund via depositing printed clothes back into machine?
+Undersuits and suits
+Limit department specifics to id card access flags
