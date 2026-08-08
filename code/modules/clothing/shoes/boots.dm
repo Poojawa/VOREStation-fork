@@ -24,7 +24,8 @@
 	name = "snake skin boots"
 	desc = "A pair of cowboy boots made from python skin."
 	icon_state = "cowboy_snakeskin"
-/* //Icons lost to time.
+
+ //Icons lost to time. //literally sitting in the shoe dmi tho
 /obj/item/clothing/shoes/boots/cowboy/green
 	name = "green cowboy boots"
 	desc = "A classic looking pair of durable cowboy boots made out of snappy green leather."
@@ -34,7 +35,7 @@
 	name = "blue cowboy boots"
 	desc = "A classic looking pair of durable cowboy boots made out of extra fancy blue leather."
 	icon_state = "cowboy_blue"
-*/
+
 /obj/item/clothing/shoes/boots/cowboy/brown
 	name = "brown cowboy boots"
 	desc = "A small sticker lets you know they've been inspected for snakes, It is unclear how long ago the inspection took place..."

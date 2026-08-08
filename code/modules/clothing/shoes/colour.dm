@@ -2,11 +2,9 @@
 /obj/item/clothing/shoes/black
 	name = "black shoes"
 	icon_state = "black"
-	desc = "A pair of black shoes."
 
 /obj/item/clothing/shoes/brown
 	name = "brown shoes"
-	desc = "A pair of brown shoes."
 	icon_state = "brown"
 
 /obj/item/clothing/shoes/blue
@@ -27,8 +25,11 @@
 
 /obj/item/clothing/shoes/red
 	name = "red shoes"
-	desc = "Stylish red shoes."
 	icon_state = "red"
+
+/obj/item/clothing/shoes/orange
+	name = "orange shoes"
+	icon_state = "orange"
 
 /obj/item/clothing/shoes/white
 	name = "white shoes"
@@ -39,6 +40,12 @@
 	name = "rainbow shoes"
 	desc = "Very colourful shoes."
 	icon_state = "rain_bow"
+
+/obj/item/clothing/shoes/lowtops
+	name = "low-top shoes"
+	icon_state = "lowtops"
+	colorable = TRUE
+	color_overlay = TRUE
 
 /obj/item/clothing/shoes/flats
 	name = "black flats"
@@ -87,40 +94,14 @@
 	icon_state = "flatsorange"
 	item_state_slots = list(slot_r_hand_str = "orange", slot_l_hand_str = "orange")
 
-/obj/item/clothing/shoes/orange
-	name = "orange shoes"
-	icon_state = "orange"
-	var/obj/item/handcuffs/chained = null
-
-/obj/item/clothing/shoes/orange/proc/attach_cuffs(obj/item/handcuffs/cuffs, mob/user as mob)
-	if (chained) return
-
-	user.drop_item()
-	cuffs.loc = src
-	chained = cuffs
-	slowdown = 15
-	icon_state = "orange1"
-
-/obj/item/clothing/shoes/orange/proc/remove_cuffs(mob/user as mob)
-	if (!chained) return
-
-	user.put_in_hands(chained)
-	chained.add_fingerprint(user)
-
-	slowdown = initial(slowdown)
-	icon_state = "orange"
-	chained = null
-
-/obj/item/clothing/shoes/orange/attack_self(mob/user)
-	. = ..(user)
-	if(.)
-		return TRUE
-	remove_cuffs(user)
-
-/obj/item/clothing/shoes/orange/attackby(H as obj, mob/user as mob)
-	..()
-	if (istype(H, /obj/item/handcuffs))
-		attach_cuffs(H, user)
+/obj/item/clothing/shoes/chitops
+	name = "high-tops"
+	desc = "A pair of shoes that extends past the ankle. Based on a centuries-old, timeless design."
+	icon_state = "hightop"
+	colorable = TRUE
+	color_overlay = TRUE
+	color = COLOR_WHITE
+	item_state_slots = list(slot_r_hand_str = "white", slot_l_hand_str = "white")
 
 /obj/item/clothing/shoes/hitops
 	name = "white high-tops"

@@ -13,6 +13,14 @@
 	display_name = "tourist, green"
 	path = /obj/item/clothing/shoes/tourist_2
 
+/datum/gear/shoes/sneakers/color
+	display_name = "sneakers, colorable"
+	path = /obj/item/clothing/shoes/sneakers
+
+/datum/gear/shoes/sneakers/color/New()
+	..()
+	gear_tweaks += GLOB.gear_tweak_free_color_choice
+
 /datum/gear/shoes/sneakerspurple
 	display_name = "sneakers, purple"
 	path = /obj/item/clothing/shoes/sneakerspurple
@@ -60,6 +68,14 @@
 /datum/gear/shoes/workboots/toeless
 	display_name = "toe-less workboots"
 	path = /obj/item/clothing/shoes/boots/workboots/toeless
+
+/datum/gear/shoes/lowtops
+	display_name = "Low-top shoes, colorable"
+	path = /obj/item/clothing/shoes/lowtops
+
+/datum/gear/shoes/lowtops/New()
+	..()
+	gear_tweaks += GLOB.gear_tweak_free_color_choice
 
 /datum/gear/shoes/black
 	display_name = "shoes, black"
@@ -125,6 +141,14 @@
 		hitops[initial(hitop_type.name)] = hitop_type
 	gear_tweaks += new/datum/gear_tweak/path(sortAssoc(hitops))
 
+/datum/gear/shoes/colorhitops
+	display_name = "high-top, colorable"
+	path = /obj/item/clothing/shoes/chitops
+
+/datum/gear/shoes/colorhitops/New()
+	..()
+	gear_tweaks += GLOB.gear_tweak_free_color_choice
+
 /datum/gear/shoes/flipflops
 	display_name = "flip flops"
 	path = /obj/item/clothing/shoes/flipflop
@@ -172,8 +196,8 @@
 		"cowboy boots, white"=/obj/item/clothing/shoes/boots/cowboy/white,
 		"cowboy boots, fancy"=/obj/item/clothing/shoes/boots/cowboy/fancy,
 		"cowboy boots, snakeskin"=/obj/item/clothing/shoes/boots/cowboy/snakeskin
-		//"cowboy boots, green"=/obj/item/clothing/shoes/boots/cowboy/green,
-		//"cowboy boots, blue"=/obj/item/clothing/shoes/boots/cowboy/blue
+		"cowboy boots, green"=/obj/item/clothing/shoes/boots/cowboy/green,
+		"cowboy boots, blue"=/obj/item/clothing/shoes/boots/cowboy/blue
 	)
 	gear_tweaks += new/datum/gear_tweak/path(sortAssoc(selector_uniforms))
 

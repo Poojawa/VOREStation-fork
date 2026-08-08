@@ -23,7 +23,14 @@
 
 	var/update_icon_define = null	// Only needed if you've got multiple files for the same type of clothing
 
-	var/polychromic = FALSE //VOREStation edit
+	/// special in-game recoloring
+	var/polychromic = FALSE
+	///for simplified icon maintenence of generic recolored clothes.
+	var/colorable = FALSE
+	/// to reduce the recoloring
+	var/fix_colored = FALSE
+	/// if we're colored via overlay
+	var/color_overlay = FALSE
 
 	var/update_icon_define_orig = null	// temp storage for original update_icon_define (if it exists)
 	var/update_icon_define_digi = null	// dmi used for the digi sprites
@@ -46,9 +53,23 @@
 	if(polychromic)
 		verbs |= /obj/item/clothing/proc/change_color
 	//VOREStation edit start
+	update_icon()
 
 /obj/item/clothing/update_icon()
 	cut_overlays() //This removes all the overlays on the sprite and then goes down a checklist adding them as required.
+	//check if we're a simplified color item and not polychromic, they have their own color handling
+	if(colorable && color && !fix_colored && !polychromic)
+		//if we color our stuff via overlay like shoes
+		if(color_overlay)
+			var/mutable_appearance/color_overlays = mutable_appearance(icon, "[icon_state]_color")
+			color_overlays.color = color
+			add_overlay(color_overlays)
+		else
+			//otherwise just color the whole item
+			add_atom_colour(color, FIXED_COLOUR_PRIORITY)
+			//avoid constantly recoloring it
+			fix_colored = TRUE
+
 	if(forensic_data?.has_blooddna())
 		add_blood()
 	. = ..()
@@ -639,6 +660,7 @@
 /obj/item/clothing/shoes
 	name = DEVELOPER_WARNING_NAME // "shoes"
 	icon = 'icons/inventory/feet/item.dmi'
+	icon_state = "shoes"
 	item_icons = list(
 		slot_l_hand_str = 'icons/mob/items/lefthand_shoes.dmi',
 		slot_r_hand_str = 'icons/mob/items/righthand_shoes.dmi',
@@ -652,22 +674,23 @@
 	slot_flags = SLOT_FEET
 	blood_sprite_state = "shoeblood"
 
-	var/can_hold_knife = 0
-	var/obj/item/holding
+	var/can_hold_knife = FALSE
+	var/obj/item/heldknife
+	var/obj/item/handcuffs/chained
 
-	var/shoes_under_pants = 0
+	var/shoes_under_pants = FALSE
 
 	var/water_speed = 0		//Speed boost/decrease in water, lower/negative values mean more speed
 	var/snow_speed = 0		//Speed boost/decrease on snow, lower/negative values mean more speed
 
 	var/step_volume_mod = 1	//How quiet or loud footsteps in this shoe are
-	var/obj/item/clothing/shoes/shoes = null	//If we are wearing shoes in our shoes. Used primarily for magboots.
+	var/obj/item/clothing/shoes/shoes	//If we are wearing shoes in our shoes. Used primarily for magboots.
 	var/blocks_footsteps = TRUE //Does this shoe block custom footstep sounds?
 
 	permeability_coefficient = 0.50
 	slowdown = SHOES_SLOWDOWN
 	force = 2
-	var/overshoes = 0
+	var/overshoes = FALSE
 	species_restricted = list("exclude",SPECIES_TESHARI, SPECIES_VOX)
 	sprite_sheets = list(
 		SPECIES_TESHARI = 'icons/inventory/feet/mob_teshari.dmi',
@@ -679,7 +702,7 @@
 
 	update_icon_define_digi = "icons/inventory/feet/mob_digi.dmi"
 	var/list/inside_emotes = list()
-	var/recent_squish = 0
+	var/recent_squish = FALSE
 
 /obj/item/clothing/shoes/Initialize(mapload)
 	. = ..()
@@ -693,8 +716,8 @@
 /obj/item/clothing/shoes/Destroy()
 	if(shoes)
 		QDEL_NULL(shoes)
-	if(holding)
-		QDEL_NULL(holding)
+	if(heldknife)
+		QDEL_NULL(heldknife)
 	return ..()
 
 /obj/item/clothing/shoes/proc/draw_knife(mob/living/user)
@@ -706,43 +729,48 @@
 	if(user.stat || user.restrained() || user.incapacitated())
 		return
 
-	holding.forceMove(get_turf(user))
+	heldknife.forceMove(get_turf(user))
 
-	if(user.put_in_hands(holding))
+	if(user.put_in_hands(heldknife))
 		user.visible_message(span_danger("\The [user] pulls a knife out of their boot!"))
 		playsound(src, 'sound/weapons/holster/sheathout.ogg', 25)
-		holding = null
+		heldknife = null
 		cut_overlay("[icon_state]_knife")
 	else
 		to_chat(user, span_warning("Your need an empty, unbroken hand to do that."))
-		holding.forceMove(src)
+		heldknife.forceMove(src)
 
-	if(!holding)
+	if(!heldknife)
 		verbs -= /obj/item/clothing/shoes/proc/draw_knife
 
 	update_icon()
 	return
 
 /obj/item/clothing/shoes/attack_hand(mob/living/M)
-	if(can_hold_knife == 1 && holding && src.loc == M)
+	if(can_hold_knife && heldknife && loc == M)
 		draw_knife(M)
+		return
+	if(chained)
+		remove_cuffs(M)
 		return
 	..()
 
 /obj/item/clothing/shoes/attackby(obj/item/I, mob/user)
-	if((can_hold_knife == 1) && (istype(I, /obj/item/material/shard) || \
+	if((can_hold_knife) && (istype(I, /obj/item/material/shard) || \
 		istype(I, /obj/item/material/butterfly) || \
 		istype(I, /obj/item/material/kitchen/utensil) || \
 		istype(I, /obj/item/material/knife/tacknife)))
-		if(holding)
-			to_chat(user, span_warning("\The [src] is already holding \a [holding]."))
+		if(heldknife)
+			to_chat(user, span_warning("\The [src] is already holding \a [heldknife]."))
 			return
 		user.unEquip(I)
 		I.forceMove(src)
-		holding = I
+		heldknife = I
 		user.visible_message(span_infoplain(span_bold("\The [user]") + " shoves \the [I] into \the [src]."))
 		verbs |= /obj/item/clothing/shoes/proc/draw_knife
 		update_icon()
+	if(istype(I, /obj/item/handcuffs))
+		attach_cuffs(I, user)
 	else
 		return ..()
 
@@ -756,10 +784,33 @@
 	shoes_under_pants = !shoes_under_pants
 	update_icon()
 
+//allow cuffed shoes for all types.
+/obj/item/clothing/shoes/proc/attach_cuffs(obj/item/handcuffs/cuffs, mob/user as mob)
+	if(chained)
+		return
+
+	user.drop_item()
+	cuffs.loc = src
+	chained = cuffs
+	slowdown = 15
+	update_icon()
+
+/obj/item/clothing/shoes/proc/remove_cuffs(mob/user as mob)
+	if(!chained)
+		return
+
+	user.put_in_hands(chained)
+	chained.add_fingerprint(user)
+	slowdown = initial(slowdown)
+	chained = null
+	update_icon()
+
 /obj/item/clothing/shoes/update_icon()
 	. = ..()
-	if(holding)
+	if(heldknife)
 		add_overlay("[icon_state]_knife")
+	if(chained)
+		add_overlay("prisoncuff")
 	if(contaminated)
 		add_overlay(GLOB.contamination_overlay)
 	if(gurgled) //VOREStation Edit Start
@@ -777,7 +828,7 @@
 
 /obj/item/clothing/shoes/proc/handle_movement(turf/walking, running, mob/living/carbon/human/pred)
 	if(!recent_squish && istype(pred))
-		recent_squish = 1
+		recent_squish = TRUE
 		VARSET_IN(src, recent_squish, FALSE, 4 SECONDS) // Reset the recent squish timer
 		for(var/mob/living/M in contents)
 			if(pred.step_mechanics_pref && M.step_mechanics_pref)
