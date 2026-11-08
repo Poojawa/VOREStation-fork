@@ -63,3 +63,8 @@
   - code_imp: added COMSIG_EXTERNAL_ORGAN_GRASP_DAMAGE_APPLICATION signal
   - code_imp: added COMSIG_MOB_HEAR_SAY signal
   - bugfix: missing parent call for remote view gene's signals
+2026-11-08:
+  Kashargul:
+  - qol: adds missing tag for bv
+  ReoDaProtovali:
+  - qol: made it so vore is opt out not opt in
